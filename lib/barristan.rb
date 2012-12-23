@@ -1,5 +1,11 @@
 # encoding: utf-8
 module Barristan
+  def guard(resource, action, user)
+    yield(guarded = Guarded.new)
+    Can.new(resource, action, user).
+      able? ? guarded.authorized! : guarded.forbidden!
+  end
+
   class Able
     def can(klasses, action, &block)
       Array(klasses).each do |klass|
@@ -47,13 +53,6 @@ module Barristan
     class << self
       def new(&block)
         yield Able.new
-        Barristan.module_eval do
-          def guard(resource, action, user)
-            yield(guarded = Guarded.new)
-            Can.new(resource, action, user).
-              able? ? guarded.authorized! : guarded.forbidden!
-          end
-        end
         Barristan
       end
     end
