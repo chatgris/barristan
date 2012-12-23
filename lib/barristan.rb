@@ -47,13 +47,14 @@ module Barristan
     class << self
       def new(&block)
         yield Able.new
-        Module.new do
+        Barristan.module_eval do
           def guard(resource, action, user)
             yield(guarded = Guarded.new)
             Can.new(resource, action, user).
               able? ? guarded.authorized! : guarded.forbidden!
           end
         end
+        Barristan
       end
     end
   end
