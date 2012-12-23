@@ -35,11 +35,11 @@ module Barristan
     end
 
     def authorized!
-      throw :guarded, @authorized.call
+      @authorized.call
     end
 
     def forbidden!
-      throw :guarded, @forbidden.call
+      @forbidden.call
     end
   end
 
@@ -50,10 +50,8 @@ module Barristan
         Module.new do
           def guard(resource, action, user)
             yield(guarded = Guarded.new)
-            catch(:guarded) do
-              Can.new(resource, action, user).
-                able? ? guarded.authorized! : guarded.forbidden!
-            end
+            Can.new(resource, action, user).
+              able? ? guarded.authorized! : guarded.forbidden!
           end
         end
       end
