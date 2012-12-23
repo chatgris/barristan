@@ -14,4 +14,5 @@ Gem::Specification.new do |s|
   s.files         = `git ls-files app lib LICENSE`.split("\n")
   s.platform      = Gem::Platform::RUBY
   s.require_paths = ['lib']
+  s.add_development_dependency "rspec"
 end
