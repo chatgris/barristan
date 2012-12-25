@@ -92,7 +92,7 @@ be lightweight and framework-agnostic.</p>
   <span class="k">end</span>
 
   <span class="n">get</span> <span class="s1">'/'</span> <span class="k">do</span>
-    <span class="n">guard</span> <span class="nb">self</span><span class="o">.</span><span class="n">class</span><span class="p">,</span> <span class="ss">:index</span><span class="p">,</span> <span class="n">current_user</span> <span class="k">do</span> <span class="o">|</span><span class="n">guarded</span><span class="o">|</span>
+    <span class="n">guard</span> <span class="no">Home</span><span class="p">,</span> <span class="ss">:index</span><span class="p">,</span> <span class="n">current_user</span> <span class="k">do</span> <span class="o">|</span><span class="n">guarded</span><span class="o">|</span>
       <span class="n">guarded</span><span class="o">.</span><span class="n">authorized</span> <span class="p">{</span> <span class="s1">'authorize'</span> <span class="p">}</span>
       <span class="n">guarded</span><span class="o">.</span><span class="n">forbidden</span>  <span class="p">{</span> <span class="n">halt</span> <span class="mi">401</span> <span class="p">}</span>
     <span class="k">end</span>
