@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=640" />
+
+    <link rel="stylesheet" href="stylesheets/core.css" media="screen"/>
+    <link rel="stylesheet" href="stylesheets/mobile.css" media="handheld, only screen and (max-device-width:640px)"/>
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css"/>
+
+    <script type="text/javascript" src="javascripts/modernizr.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script type="text/javascript" src="javascripts/headsmart.min.js"></script>
+    <script type="text/javascript">
+      $(document).ready(function () {
+        $('#main_content').headsmart()
+      })
+    </script>
+    <title>Barristan by chatgris</title>
+  </head>
+
+  <body>
+    <a id="forkme_banner" href="https://github.com/chatgris/barristan">View on GitHub</a>
+    <div class="shell">
+
+      <header>
+        <span class="ribbon-outer">
+          <span class="ribbon-inner">
+            <h1>Barristan</h1>
+            <h2>Llightweight and framework-agnostic ruby authorization system.</h2>
+          </span>
+          <span class="left-tail"></span>
+          <span class="right-tail"></span>
+        </span>
+      </header>
+
+      <section id="downloads">
+        <span class="inner">
+          <a href="https://github.com/chatgris/barristan/zipball/master" class="zip"><em>download</em> .ZIP</a><a href="https://github.com/chatgris/barristan/tarball/master" class="tgz"><em>download</em> .TGZ</a>
+        </span>
+      </section>
+
+
+      <span class="banner-fix"></span>
+
+
+      <section id="main_content">
+        <p>barristan is a minimal authorization system build in Ruby. barristan is meant to
+be lightweight and framework-agnostic.</p>
+
+<h2>Installation</h2>
+
+<p>Ruby 1.9.2 is required.</p>
+
+<p>Install it with rubygems:</p>
+
+<pre><code>gem install barristan
+</code></pre>
+
+<p>With bundler, add it to your <code>Gemfile</code>:</p>
+
+<div class="highlight"><pre><span class="n">gem</span> <span class="s2">"barristan"</span>
+</pre></div>
+
+<p>And then, run <code>bundle</code>.</p>
+
+<h2>Complete sinatra example</h2>
+
+<p>In a file called <code>config.ru</code>:</p>
+
+<div class="highlight"><pre><span class="nb">require</span> <span class="s1">'sinatra'</span>
+<span class="nb">require</span> <span class="s1">'barristan'</span>
+
+<span class="no">User</span> <span class="o">=</span> <span class="no">Struct</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="ss">:role</span><span class="p">)</span> <span class="k">do</span>
+  <span class="k">def</span> <span class="nf">admin?</span>
+    <span class="n">role</span> <span class="o">==</span> <span class="s1">'admin'</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="nc">Home</span> <span class="o">&lt;</span> <span class="no">Sinatra</span><span class="o">::</span><span class="no">Base</span>
+  <span class="kp">include</span> <span class="no">Barristan</span><span class="o">::</span><span class="no">Acl</span><span class="o">.</span><span class="n">new</span> <span class="p">{</span><span class="o">|</span><span class="n">acl</span><span class="o">|</span>
+    <span class="n">acl</span><span class="o">.</span><span class="n">can</span> <span class="no">Home</span><span class="p">,</span> <span class="ss">:index</span> <span class="k">do</span> <span class="o">|</span><span class="n">app</span><span class="p">,</span> <span class="n">user</span><span class="o">|</span>
+      <span class="n">user</span><span class="o">.</span><span class="n">admin?</span>
+    <span class="k">end</span>
+  <span class="p">}</span>
+
+  <span class="n">helpers</span> <span class="k">do</span>
+    <span class="k">def</span> <span class="nf">current_user</span>
+      <span class="no">User</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">params</span><span class="o">[</span><span class="ss">:role</span><span class="o">]</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="n">get</span> <span class="s1">'/'</span> <span class="k">do</span>
+    <span class="n">guard</span> <span class="nb">self</span><span class="o">.</span><span class="n">class</span><span class="p">,</span> <span class="ss">:index</span><span class="p">,</span> <span class="n">current_user</span> <span class="k">do</span> <span class="o">|</span><span class="n">guarded</span><span class="o">|</span>
+      <span class="n">guarded</span><span class="o">.</span><span class="n">authorized</span> <span class="p">{</span> <span class="s1">'authorize'</span> <span class="p">}</span>
+      <span class="n">guarded</span><span class="o">.</span><span class="n">forbidden</span>  <span class="p">{</span> <span class="n">halt</span> <span class="mi">401</span> <span class="p">}</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+<span class="k">end</span>
+
+<span class="n">run</span> <span class="no">Home</span>
+</pre></div>
+
+<p>Run: <code>rackup</code>.</p>
+
+<p>Let's check it with <code>curl</code></p>
+
+<div class="highlight"><pre>curl -i <span class="s2">"http://localhost:9292"</span>
+<span class="c"># HTTP/1.1 401 Unauthorized</span>
+curl -i <span class="s2">"http://localhost:9292?role=admin"</span>
+<span class="c"># HTTP/1.1 200 OK</span>
+</pre></div>
+
+<h2>Usage</h2>
+
+<div class="highlight"><pre><span class="k">class</span> <span class="nc">Controller</span>
+  <span class="kp">include</span> <span class="no">Barristan</span><span class="o">::</span><span class="no">Acl</span><span class="o">.</span><span class="n">new</span> <span class="p">{</span><span class="o">|</span><span class="n">acl</span><span class="o">|</span>
+    <span class="n">acl</span><span class="o">.</span><span class="n">can</span> <span class="no">Post</span><span class="p">,</span> <span class="ss">:index</span>
+    <span class="n">acl</span><span class="o">.</span><span class="n">can</span> <span class="o">[</span><span class="no">Post</span><span class="p">,</span> <span class="no">Comment</span><span class="o">]</span><span class="p">,</span> <span class="ss">:new</span> <span class="k">do</span> <span class="o">|</span><span class="n">post</span><span class="p">,</span> <span class="n">user</span><span class="o">|</span>
+      <span class="o">!!</span><span class="n">user</span>
+    <span class="k">end</span>
+
+    <span class="n">acl</span><span class="o">.</span><span class="n">can</span> <span class="no">Post</span><span class="p">,</span> <span class="ss">:update</span> <span class="k">do</span> <span class="o">|</span><span class="n">post</span><span class="p">,</span> <span class="n">user</span><span class="o">|</span>
+      <span class="n">post</span><span class="o">.</span><span class="n">user</span> <span class="o">==</span> <span class="n">user</span> <span class="o">||</span> <span class="n">user</span><span class="o">.</span><span class="n">admin?</span>
+    <span class="k">end</span>
+  <span class="p">}</span>
+
+  <span class="k">def</span> <span class="nf">update</span>
+    <span class="n">guard</span> <span class="vi">@post</span> <span class="o">=</span> <span class="no">Post</span><span class="o">.</span><span class="n">new</span><span class="p">,</span> <span class="ss">:update</span><span class="p">,</span> <span class="n">current_user</span> <span class="k">do</span> <span class="o">|</span><span class="n">guarded</span><span class="o">|</span>
+      <span class="n">guarded</span><span class="o">.</span><span class="n">authorized</span> <span class="p">{</span> <span class="vi">@post</span><span class="o">.</span><span class="n">update</span> <span class="p">}</span>
+      <span class="n">guarded</span><span class="o">.</span><span class="n">forbidden</span>  <span class="p">{</span> <span class="k">raise</span>  <span class="p">}</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</pre></div>
+      </section>
+
+      <footer>
+        <span class="ribbon-outer">
+          <span class="ribbon-inner">
+            <p>this project by <a href="https://github.com/chatgris">chatgris</a> can be found on <a href="https://github.com/chatgris/barristan">GitHub</a></p>
+          </span>
+          <span class="left-tail"></span>
+          <span class="right-tail"></span>
+        </span>
+        <p>Generated with <a href="http://pages.github.com">GitHub Pages</a> using Merlot</p>
+        <span class="octocat"></span>
+      </footer>
+
+    </div>
+
+    
+  </body>
+</html>
