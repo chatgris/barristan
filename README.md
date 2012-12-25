@@ -1,6 +1,7 @@
 # barristan
 
-barristan is a minimal authorization system build in Ruby.
+barristan is a minimal authorization system build in Ruby. barristan is meant to
+be lightweight and framework-agnostic.
 
 ## Installation
 
