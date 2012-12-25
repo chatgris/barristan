@@ -8,9 +8,9 @@ Gem::Specification.new do |s|
   s.version       = Barristan::VERSION
   s.authors       = ["chatgris"]
   s.email         = ["jboyer@af83.com"]
-  s.homepage      = "https://github.com/chatgris/barristan"
+  s.homepage      = "http://chatgris.github.com/barristan"
   s.summary       = "Ruby authorization system."
-  s.description   = "Ruby authorization system."
+  s.description   = "Lightweight and framework-agnostic ruby authorization system."
   s.files         = `git ls-files app lib LICENSE`.split("\n")
   s.platform      = Gem::Platform::RUBY
   s.require_paths = ['lib']
