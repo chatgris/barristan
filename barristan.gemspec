@@ -11,6 +11,7 @@ Gem::Specification.new do |s|
   s.homepage      = "http://chatgris.github.com/barristan"
   s.summary       = "Ruby authorization system."
   s.description   = "Lightweight and framework-agnostic ruby authorization system."
+  s.license       = 'MIT'
   s.files         = `git ls-files app lib LICENSE`.split("\n")
   s.platform      = Gem::Platform::RUBY
   s.require_paths = ['lib']
